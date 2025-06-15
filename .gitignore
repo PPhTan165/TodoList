@@ -1,0 +1,15 @@
+# Global
+node_modules
+dist
+.env
+.DS_Store
+
+# Vue client
+/client/node_modules
+/client/dist
+/client/.env
+
+# Express server
+/server/node_modules
+/server/dist
+/server/.env
