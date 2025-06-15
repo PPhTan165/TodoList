@@ -5,6 +5,5 @@
 - `client/` - Vue 3 frontend
 - `server/` - Typescript Express backend
 
-## 🚀 Setup
 
-### Frontend
+
