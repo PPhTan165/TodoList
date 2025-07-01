@@ -1,17 +1,77 @@
 // This is a simple Express server that responds to a ping request
-import express from 'express'
-import cors from 'cors'
+import express from "express";
+import cors from "cors";
 
-const app = express()
-const PORT = 3000
+const mysql = require("mysql2");
+const bodyParser = require("body-parser");
+const app = express();
+const PORT = 3000;
 
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(bodyParser.json());
 
-app.get('/api/ping', (req, res) => {
-  res.json({ message: 'pong!' })
-})
+// MySQL connection
+const db = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "todo_app",
+});
+
+db.connect((err: any) => {
+  if (err) throw err;
+  console.log("MySQL connected...");
+});
+
+//API: get all
+
+app.get("/api/todos", (req: any, res: any) => {
+  db.query("SELECT * FROM todos", (err: any, results: any) => {
+    if (err) throw err;
+    res.json(results);
+  });
+});
+
+//API: add a todo
+app.post("/api/todos", (req: any, res: any) => {
+  const { title } = req.body;
+  db.query(
+    "INSERT INTO todos (title) VALUES (?)",
+    [title],
+    (err: any, results: any) => {
+      if (err) throw err;
+      res.json({ id: results.insertId, title, completed: false });
+    }
+  );
+});
+
+//API: update a todo
+app.put("/api/todos/:id", (req: any, res: any) => {
+  const { id } = req.params;
+  const { title, completed } = req.body;
+  db.query(
+    "UPDATE todos SET title = ?, completed = ? WHERE id = ?",
+    [title, completed, id],
+    (err: any) => {
+      if (err) throw err;
+      res.json({ message: "Todo updated successfully" });
+    }
+  );
+});
+
+//API: delete a todo
+app.delete("/api/todos/:id", (req: any, res: any) => {
+  const { id } = req.params;
+  db.query(
+    "DELETE FROM todos WHERE id = ?",
+    [id],
+    (err: any) => {
+      if (err) throw err;
+      res.json({ message: "Todo updated successfully" });
+    }
+  );
+});
 
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`)
-})
+  console.log(`Server is running on http://localhost:${PORT}`);
+});

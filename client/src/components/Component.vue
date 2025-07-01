@@ -5,7 +5,7 @@ import { ref, onMounted } from 'vue'
 const msg = ref('')
 
 onMounted(async () => {
-  const res = await fetch('http://localhost:3000/api/ping')
+  const res = await fetch('http://localhost:3000/api/connect')
   const data = await res.json()
   msg.value = data.message
 })
