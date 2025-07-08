@@ -1,9 +1,10 @@
 import { defineStore } from "pinia";
-import { deleteTodo, getTodos, createTodo } from "@/api/todo";
+import { deleteTodo, getTodos, createTodo, getTodoById } from "@/api/todo";
 
 export const useTodoStore = defineStore("todo", {
   state: () => ({
     todos: [] as { id: number; title: string }[],
+    currentTodo: null as { id: number; title: string, completed: boolean} | null,
     loading: false,
   }),
 
@@ -17,6 +18,15 @@ export const useTodoStore = defineStore("todo", {
         console.error("Error fetching todos:", error);
       } finally {
         this.loading = false;
+      }
+    },
+    async fetchTodoById(id: number){
+      this.loading = true;
+      try {
+        const respone = await getTodoById(id);
+        this.currentTodo = respone.data;
+      } catch (error) {
+        console.error("Error fetching todo by ID:", error);
       }
     },
 

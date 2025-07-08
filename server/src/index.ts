@@ -9,6 +9,7 @@ const PORT = 3000;
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.json());
 
 // MySQL connection
 const db = mysql.createConnection({
@@ -31,6 +32,18 @@ app.get("/api/todos", (req: any, res: any) => {
     res.json(results);
   });
 });
+
+app.get("/api/todos/:id", (req: any, res: any) => {
+  const {id} = req.params;
+  db.query("SELECT * FROM todos WHERE id = ?", [id], (err: any, results: any) => {
+    if (err) throw err;
+    if (results.length > 0) {
+      res.json(results[0]);
+    } else {
+      res.status(404).json({ message: "Todo not found" });
+    }
+  });
+})
 
 //API: add a todo
 app.post("/api/todos", (req: any, res: any) => {
