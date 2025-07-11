@@ -16,19 +16,54 @@ onMounted(() => {
 const goBack = () => {
   router.push("/");
 };
-const handleRemoveTodo = (id) => {
-  todoStore.removeTodo(id);
+const handleUpdateTodo = () => {
+  todoStore.updateTodoList(todoId, todoStore.currentTodo);
   router.push("/");
 };
 </script>
 
 <template>
+  <h1>Chi tiết thẻ</h1>
   <div class="card-detail" v-if="todoStore.currentTodo">
-    <h1>Detail</h1>
-    <p>{{ todoStore.currentTodo.title }}</p>
-    <button @click="handleRemoveTodo(todoId)">Remove Todo</button>
-    <button @click="goBack">Go Back</button>
+    <div class="input-group">
+      <label for="">Title</label>
+      <input type="text" v-model="todoStore.currentTodo.title"  />
+    </div>
+    <div class="btn-group">
+      <button class="btn-update" @click="handleUpdateTodo">
+        Update Todo
+      </button>
+      <button class="btn-action" @click="goBack">Go Back</button>
+    </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.card-detail {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+}
+.input-group {
+  margin-bottom: 20px;
+}
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  font-size: 1rem;
+}
+input[type="text"] {
+  width: 700px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+.btn-group {
+  display: flex;
+  gap: 10px;
+}
+</style>

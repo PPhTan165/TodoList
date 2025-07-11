@@ -1,26 +1,58 @@
 <script setup lang="ts">
-import { useTodoStore } from '@/stores/todoStore';
-import { onMounted } from 'vue';
-import CardComponent from '@/components/card/CardComponent.vue';
-import router from '@/router';
-const todoStore = useTodoStore();
+import { useTodoStore } from "@/stores/todoStore";
+import { onMounted, ref } from "vue";
+import CardComponent from "@/components/card/CardComponent.vue";
+import { useRouter } from "vue-router";
+import draggable from "vuedraggable";
 
+const router = useRouter();
+const todoStore = useTodoStore();
 onMounted(() => {
   todoStore.fetchTodos();
-})
+});
 
-const handleCardDetailClick = (id:number) => {
-  router.push(`/todo/${id}`);
-}
+
+const handleCardDetailClick = (id: number) => {
+  // router.push(`/todo/${id}`);
+};
 </script>
 
 <template>
   <main>
-    <h1>Todo List</h1>
-    <div v-for="todo in todoStore.todos" @click="handleCardDetailClick(todo.id)">
+    <h1>TODO LIST</h1>
+    <input
+      type="text"
+      v-model="todoStore.txtSearch"
+      placeholder="Search todos by title"
+    />
+    <div class="item" v-for="todo in todoStore.filteredTodos" @click="handleCardDetailClick(todo.id)">
       <CardComponent 
       :title="todo.title"
       :id = "todo.id" />
     </div>
+
+
   </main>
 </template>
+
+<style scoped>
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: #333;
+  font-weight: bold;
+}
+.item {
+  max-width: 500px;
+}
+input {
+  width: 100%;
+  padding: 1rem 1rem;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+</style>

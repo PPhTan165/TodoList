@@ -15,7 +15,7 @@ const handleCreateTodo = () => {
     console.log('Creating todo with title:', title.value.trim());
     todoStore.addTodo(title.value.trim());
     // title.value = '';
-    //router.push('/');
+    router.push('/');
 }
 
 onMounted(() => {

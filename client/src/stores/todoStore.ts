@@ -1,10 +1,15 @@
 import { defineStore } from "pinia";
-import { deleteTodo, getTodos, createTodo, getTodoById } from "@/api/todo";
+import { deleteTodo, getTodos, createTodo, getTodoById, updateTodo } from "@/api/todo";
 
 export const useTodoStore = defineStore("todo", {
   state: () => ({
     todos: [] as { id: number; title: string }[],
-    currentTodo: null as { id: number; title: string, completed: boolean} | null,
+    currentTodo: null as {
+      id: number;
+      title: string;
+      completed: boolean;
+    } | null,
+    txtSearch: "",
     loading: false,
   }),
 
@@ -20,7 +25,7 @@ export const useTodoStore = defineStore("todo", {
         this.loading = false;
       }
     },
-    async fetchTodoById(id: number){
+    async fetchTodoById(id: number) {
       this.loading = true;
       try {
         const respone = await getTodoById(id);
@@ -46,6 +51,28 @@ export const useTodoStore = defineStore("todo", {
       } catch (error) {
         console.error("Error deleting todo:", error);
       }
+    },
+
+    async updateTodoList (id: number, data: {title: string}){
+      try{ 
+        await updateTodo(id,data);
+        const index = this.todos.findIndex((todo) => todo.id === id);
+        if (index !== -1) {
+          this.todos[index].title = data.title;
+        }
+      }catch (error) {
+        console.error("Error updating todo:", error);
+      }
+    }
+  },
+
+  
+
+  getters: {
+    filteredTodos(state) {
+      return state.todos.filter((todo) =>
+        todo.title.toLowerCase().includes(state.txtSearch.toLowerCase())
+      );
     },
   },
 });

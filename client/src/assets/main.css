@@ -7,5 +7,41 @@
   font-weight: normal;
 }
 
+.btn-dlt { 
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
 
+.btn-dlt:hover {
+  background-color: #ff7875;
+}
 
+.btn-action{
+  background-color: #1890ff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-action:hover {
+  background-color: #40a9ff;
+}
+
+.btn-update {
+  background-color: #52c41a;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}   
+
+.btn-update:hover {
+  background-color: #73d13d;
+}
