@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { useTodoStore } from "@/stores/todoStore";
 import { defineProps, defineEmits } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 
 const router = useRouter();
-const route = useRoute();
 const todoStore = useTodoStore();
-const todoId = route.params.id;
 const props = defineProps({
   id: {
     type: Number,
