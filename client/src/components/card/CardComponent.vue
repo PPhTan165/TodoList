@@ -22,6 +22,7 @@ const emits = defineEmits<{
 const handleDetailClick = () => {
   // emits("detail-click", props.id);
   console.log("Card clicked with ID:", props.id);
+  router.push(`/todo/${props.id}`)
 };
 
 const handleRemoveTodo = () => {
@@ -42,7 +43,7 @@ const handleRemoveTodo = () => {
   display: flex;
   justify-content: space-between;
   max-width: 500px;
-  width: 500px;
+  width: 450px;
   border-radius: 8px;
   padding: 16px;
   margin: 16px;

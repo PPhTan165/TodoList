@@ -9,7 +9,9 @@ import {
 import { authMiddleware } from "../middleware/auth.middleware"; // Ensure you have this middleware for authentication
 
 
+
 const router = express.Router();
+
 router.get("/",authMiddleware, getTodos);
 router.get("/:id",authMiddleware, getTodoById);
 router.post("/",authMiddleware, createTodo);

@@ -8,6 +8,7 @@ export const useTodoStore = defineStore("todo", {
       id: number;
       title: string;
       completed: boolean;
+      userId: number;
     } | null,
     txtSearch: "",
     loading: false,

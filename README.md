@@ -2,8 +2,8 @@
 
 ## 📦 Structure
 
-- `client/` - Vue 3 frontend
-- `server/` - Typescript Express backend
+- `client/` - Vue 3 Typescript FE
+- `server/` - Typescript Express BE
 
 
 

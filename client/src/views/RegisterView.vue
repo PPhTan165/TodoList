@@ -1,26 +1,29 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/authStore'
-import { useRouter } from 'vue-router'
-import { ref } from 'vue'
-import * as yup from 'yup'
+import { useAuthStore } from "@/stores/authStore";
+import { useRouter } from "vue-router";
+import { ref } from "vue";
+import * as yup from "yup";
 
-const email = ref('')
-const password = ref('')
-const confirmPassword = ref('')
-const errors = ref<Record<string, string>>({})
+const email = ref("");
+const password = ref("");
+const confirmPassword = ref("");
+const errors = ref<Record<string, string>>({});
 
-const router = useRouter()
-const auth = useAuthStore()
+const router = useRouter();
+const auth = useAuthStore();
 
 // Schema xác thực
 const schema = yup.object().shape({
-  username: yup.string().required('Bắt buộc nhập username'),
-  password: yup.string().required('Bắt buộc nhập password').min(6, 'Tối thiểu 6 ký tự'),
+  email: yup.string().required("Bắt buộc nhập email"),
+  password: yup
+    .string()
+    .required("Bắt buộc nhập password")
+    .min(6, "Tối thiểu 6 ký tự"),
   confirmPassword: yup
     .string()
-    .oneOf([yup.ref('password')], 'Mật khẩu xác nhận không khớp')
-    .required('Nhập lại mật khẩu'),
-})
+    .oneOf([yup.ref("password")], "Mật khẩu xác nhận không khớp")
+    .required("Nhập lại mật khẩu"),
+});
 
 const onSubmit = async () => {
   try {
@@ -31,40 +34,43 @@ const onSubmit = async () => {
         confirmPassword: confirmPassword.value,
       },
       { abortEarly: false }
-    )
+    );
 
     // Nếu hợp lệ → gửi đăng ký
-    await auth.registerUser({ email: email.value, password: password.value })
-    router.push('/')
+    await auth.registerUser({ email: email.value, password: password.value });
+    router.push("/login");
+    alert('Đăng ký thành công')
   } catch (err: any) {
     // Hiển thị lỗi
-    errors.value = {}
+    errors.value = {};
     err.inner.forEach((e: any) => {
-      errors.value[e.path] = e.message
-    })
+      errors.value[e.path] = e.message;
+    });
   }
-}
+};
 </script>
 
-
 <template>
-  <form @submit.prevent="onSubmit">
-    <div>
-      <label>Email</label>
-      <input type="email" v-model="email" />
-      <p class="error" v-if="errors.username">{{ errors.username }}</p>
-    </div>
+  <div>
+    <label>Email</label>
+    <input type="email" v-model="email" />
+    <p class="error" v-if="errors.email">{{ errors.email }}</p>
+  </div>
 
-    <div>
-      <label>Password</label>
-      <input v-model="password" type="password" />
-      <p class="error" v-if="errors.password">{{ errors.password }}</p>
-    </div>
+  <div>
+    <label>Password</label>
+    <input v-model="password" type="password" />
+    <p class="error" v-if="errors.password">{{ errors.password }}</p>
+  </div>
 
-    <button type="submit">Login</button>
-  </form>
+  <div>
+    <label>Confirm Password</label>
+    <input v-model="confirmPassword" type="password" />
+    <p class="error" v-if="errors.confirmPassword">{{ errors.confirmPassword }}</p>
+  </div>
+
+  <button type="submit" @click="onSubmit">Register</button>
 </template>
-
 
 <style scoped>
 .error {
@@ -92,5 +98,4 @@ button {
 button:hover {
   background-color: #0056b3;
 }
-
 </style>

@@ -4,17 +4,17 @@ import { onMounted, ref } from "vue";
 import CardComponent from "@/components/card/CardComponent.vue";
 import { useRouter } from "vue-router";
 import draggable from "vuedraggable";
+import { useAuthStore } from "@/stores/authStore";
 
 const router = useRouter();
 const todoStore = useTodoStore();
+const authStore = useAuthStore();
 onMounted(() => {
   todoStore.fetchTodos();
 });
 
 
-const handleCardDetailClick = (id: number) => {
-  // router.push(`/todo/${id}`);
-};
+
 </script>
 
 <template>
@@ -25,10 +25,16 @@ const handleCardDetailClick = (id: number) => {
       v-model="todoStore.txtSearch"
       placeholder="Search todos by title"
     />
-    <div class="item" v-for="todo in todoStore.filteredTodos" @click="handleCardDetailClick(todo.id)">
-      <CardComponent 
-      :title="todo.title"
-      :id = "todo.id" />
+    <div class="container" v-if="authStore.isAuthenticated">
+      <div class="item" v-for="todo in todoStore.filteredTodos">
+        
+        <CardComponent 
+        :title="todo.title"
+        :id = "todo.id" />
+      </div>
+    </div>
+    <div v-else>
+      Trang chủ Todo List
     </div>
 
 
@@ -43,8 +49,13 @@ h1 {
   color: #333;
   font-weight: bold;
 }
+.container{ 
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+}
 .item {
-  max-width: 500px;
+  max-width: 450px;
+
 }
 input {
   width: 100%;

@@ -1,19 +1,23 @@
 import { db } from "../models/db"; // Import the database connection
-import { Request, Response, NextFunction, RequestHandler } from "express";
+import { Request, Response, NextFunction } from "express";
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-export const register  = async ( req: Request,res: Response, next: NextFunction): Promise<void> => {
+export const register = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   const { email, password } = req.body;
   const hashed = await bcrypt.hash(password, 10);
   if (!email || !password) {
-     res.status(400).json({ message: "Email and password are required" });
+    res.status(400).json({ message: "Email and password are required" });
   }
 
   db.query(
-    "INSERT INTO users (email, password) VALUES (?, ?)",
-    [email, hashed],
+    "INSERT INTO users (email, password,role) VALUES (?, ?, ?)",
+    [email, hashed, 1],
     (error: any, results: any) => {
       if (error)
         return res.status(500).json({ error: "Database query failed" });
@@ -33,11 +37,11 @@ export const login = async (
 ): Promise<void> => {
   const { email, password } = req.body;
   if (!email || !password) {
-     res.status(400).json({ message: "Email and password are required" });
+    res.status(400).json({ message: "Email and password are required" });
   }
 
   db.query(
-    "SELECT * FROM users WHERE email = ?",
+    "SELECT * FROM users WHERE email = ? ",
     [email],
     async (error: any, results: any) => {
       if (error)
@@ -52,7 +56,9 @@ export const login = async (
             process.env.JWT_SECRET || "secret",
             { expiresIn: "1h" }
           );
-          return res.status(200).json({ token });
+          return res.status(200).json({
+            token,
+          });
         } else {
           return res.status(401).json({ message: "Invalid credentials" });
         }
