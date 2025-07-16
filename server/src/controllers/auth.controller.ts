@@ -10,15 +10,18 @@ export const register = async (
   next: NextFunction
 ): Promise<void> => {
   const { email, password } = req.body;
+  const role_id = 1;
   const hashed = await bcrypt.hash(password, 10);
+  
   if (!email || !password) {
     res.status(400).json({ message: "Email and password are required" });
   }
 
   db.query(
-    "INSERT INTO users (email, password,role) VALUES (?, ?, ?)",
-    [email, hashed, 1],
+    "INSERT INTO users (email, password, role_id) VALUES (?, ?, ?)",
+    [email, hashed, role_id],
     (error: any, results: any) => {
+
       if (error)
         return res.status(500).json({ error: "Database query failed" });
       if (results.affectedRows > 0) {
@@ -30,7 +33,7 @@ export const register = async (
   );
 };
 
-export const login = async (
+export const loginController = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -44,23 +47,34 @@ export const login = async (
     "SELECT * FROM users WHERE email = ? ",
     [email],
     async (error: any, results: any) => {
+
       if (error)
         return res.status(500).json({ error: "Database query failed" });
 
       if (results.length > 0) {
         const user = results[0];
         const isMatch = await bcrypt.compare(password, user.password);
-        if (isMatch) {
+
+        if (!isMatch)
+          return res.status(401).json({ message: "Wrong Password" });
+
+        if (user.role_id === 1) {
           const token = jwt.sign(
-            { id: user.id, email: user.email },
+            { id: user.id, email: user.email, role: user.role_id },
             process.env.JWT_SECRET || "secret",
             { expiresIn: "1h" }
           );
-          return res.status(200).json({
-            token,
-          });
+          return res.status(200).json({ token: token });
+
+        } else if (user.role_id === 2) {
+          const token = jwt.sign(
+            { id: user.id, email: user.email, role: user.role_id },
+            process.env.JWT_SECRET || "secret",
+            { expiresIn: "1h" }
+          );
+          return res.status(200).json({ token: token });
         } else {
-          return res.status(401).json({ message: "Invalid credentials" });
+          return res.status(401).json({ message: "Không có quyền" });
         }
       }
     }

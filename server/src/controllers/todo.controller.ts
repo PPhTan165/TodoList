@@ -3,6 +3,7 @@ import { db } from "../models/db"; // Import the database connection
 
 export const getTodos = async (req: Request, res: Response): Promise<void> => {
   const user_id = req.user?.id;
+  console.log(req.user?.role);
   if (!user_id) {
     res.status(401).json({ message: "Unauthorized" });
     return;
