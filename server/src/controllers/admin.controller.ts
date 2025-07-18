@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
-import { db } from "../models/db"; // Import the database connection
+import * as UserModel from "../models/user.model";
 
 export const getUser = async (req: Request, res: Response): Promise<void> => {
   const role = req.user?.role;
   const user_id = req.user?.id;
-  console.log(role);
 
   if (!user_id) {
     res.status(401).json({ message: "Unauthorized" });
@@ -15,17 +14,12 @@ export const getUser = async (req: Request, res: Response): Promise<void> => {
     res.status(401).json({ message: "Unauthorized Admin" });
   }
 
-  db.query(
-    "SELECT id, email FROM users WHERE role_id = ?",
-    [1],
-    (err: any, results: any) => {
-      if (err) {
-        res.status(500).json({ error: "Database query failed" });
-        return;
-      }
-      res.json(results);
-    }
-  );
+  try {
+    const users = await UserModel.getAllUser();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: "DB error" });
+  }
 };
 
 export const getUserById = async (req: Request, res: Response) => {
@@ -43,18 +37,10 @@ export const getUserById = async (req: Request, res: Response) => {
     res.status(401).json({ message: "Unauthorized Admin" });
   }
 
-  db.query(
-    "SELECT id, email FROM users WHERE id = ? AND role_id = ?",
-    [id, 1],
-    (err: any, results: any) => {
-      if (err) {
-        return res.status(500).json({ error: "Database query failed" });
-      }
-      if (results.length > 0) {
-        res.status(200).json(results[0]);
-      } else {
-        res.status(401).json({ message: "No user exits" });
-      }
-    }
-  );
+  try {
+    const user = await UserModel.getUserById(Number(id));
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "DB error" });
+  }
 };

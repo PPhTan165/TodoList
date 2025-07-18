@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import { db } from "../models/db"; // Import the database connection
+import { db } from "../config/db"; // Import the database connection
 
-export const getTodos = async (req: Request, res: Response): Promise<void> => {
+export const getTodos = async (req: Request, res: Response): Promise<any> => {
   const user_id = req.user?.id;
-  console.log(req.user?.role);
+  
   if (!user_id) {
-    res.status(401).json({ message: "Unauthorized" });
-    return;
+   return res.status(401).json({ message: "Unauthorized" });
+  
   }
   db.query(
     "SELECT * FROM todos WHERE user_id = ?",
@@ -16,7 +16,7 @@ export const getTodos = async (req: Request, res: Response): Promise<void> => {
          res.status(500).json({ error: "Database query failed" });
          return;
       }
-      res.json(results);
+     return res.json(results);
     }
   );
 };
@@ -25,8 +25,8 @@ export const getTodoById = (req: Request, res: Response) => {
   const { id } = req.params;
   const user_id = req.user?.id;
   if (!user_id) {
-    res.status(401).json({ message: "Unauthorized" });
-    return;
+    return res.status(401).json({ message: "Unauthorized" });
+    
   }
   db.query(
     "SELECT * FROM todos WHERE id = ? AND user_id = ?",
