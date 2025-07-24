@@ -71,8 +71,15 @@ export const createUser = (
   });
 };
 
-
-
 export const verifyPassword = (plain: string, hashed: string): Promise<boolean> => {
   return bcrypt.compare(plain, hashed);
 };
+
+export const createGroup = (name: string, userId: number): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    db.query("INSERT INTO groups (name, owner_id) VALUE (?,?)",[name, userId], (err: any, results: any) => { 
+      if(err) return reject(err);
+      resolve(results);
+    })
+  })
+}

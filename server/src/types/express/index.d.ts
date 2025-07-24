@@ -6,7 +6,14 @@ declare global {
       user?: {
         id: number;
         email: string;
-        role: number;
+        role_id: number;
+      },
+
+      goal?: {
+        id: number;
+        title: string;
+        description?: string;
+        owner_id: number;
       }
   
     }

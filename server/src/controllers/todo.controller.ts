@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { db } from "../config/db"; // Import the database connection
-
+import * as taskModel from "../models/todo.model"
 export const getTodos = async (req: Request, res: Response): Promise<any> => {
   const user_id = req.user?.id;
   
@@ -8,40 +8,27 @@ export const getTodos = async (req: Request, res: Response): Promise<any> => {
    return res.status(401).json({ message: "Unauthorized" });
   
   }
-  db.query(
-    "SELECT * FROM todos WHERE user_id = ?",
-    [user_id],
-    (err: any, results: any) => {
-      if (err) {
-         res.status(500).json({ error: "Database query failed" });
-         return;
-      }
-     return res.json(results);
-    }
-  );
+  try {
+    const tasks = taskModel.getTasks(user_id)
+    res.status(200).json({tasks});
+  } catch (error) {
+    res.status(500).json({message: "Database err"})
+  }
+  
 };
 
-export const getTodoById = (req: Request, res: Response) => {
+export const getTodoById = (req: Request, res: Response)=> {
   const { id } = req.params;
-  const user_id = req.user?.id;
-  if (!user_id) {
-    return res.status(401).json({ message: "Unauthorized" });
+  const goalId = req.goal?.id;
+  if (!goalId) {
+    res.status(401).json({ message: "Unauthorized" });
     
   }
-  db.query(
-    "SELECT * FROM todos WHERE id = ? AND user_id = ?",
-    [id, user_id],
-    (err: any, results: any) => {
-      if (err) {
-        return res.status(500).json({ error: "Database query failed" });
-      }
-      if (results.length > 0) {
-        res.json(results[0]);
-      } else {
-        res.status(404).json({ message: "Todo not found" });
-      }
-    }
-  );
+  try {
+    const task = taskModel.getTaskById(Number(id), goalId)
+  } catch (error) {
+    
+  }
 };
 
 export const createTodo = (req: Request, res: Response) => {

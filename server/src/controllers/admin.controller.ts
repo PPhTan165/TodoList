@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import * as UserModel from "../models/user.model";
 
 export const getUser = async (req: Request, res: Response): Promise<void> => {
-  const role = req.user?.role;
+  const role = req.user?.role_id;
   const user_id = req.user?.id;
 
   if (!user_id) {
