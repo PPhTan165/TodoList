@@ -12,13 +12,14 @@ export const register = async (
   
   const { username, email,phone, password } = req.body;
   const hashed = await bcrypt.hash(password, 10);
-  const existing = await UserModel.findUserByEmail(email);
+  const existing: any = await  UserModel.findUserByEmail(email);
 
   if (!email || !password || !username || !phone) {
     return res.status(400).json({ message: "Missing field" });
   }
 
   if (existing) {
+    console.log(existing);
     return res.status(400).json({ message: "Email already exist" });
   }
   try {
@@ -41,23 +42,24 @@ export const loginController = async (
   if (!username || !password) {
     return res.status(400).json({ message: "Email and password are required" });
   }
-  const user = await UserModel.findUserByName(username);
-  if (!user) return res.status(404).json({ message: "Not found User" });
+  const users = await UserModel.findUserByName(username);
+  const user = users[0];
+  if (!users) return res.status(404).json({ message: "Not found User" });
 
-  const isMatch = await UserModel.verifyPassword(password, user[0].password);
+  const isMatch =  UserModel.verifyPassword(password, user.password);
   if (!isMatch) return res.status(401).json({ message: "Wrong Password" });
 
-  if (user[0].role_id === 1) {
+  if (user.role_id === 1) {
     const token = jwt.sign(
-      { id: user[0].id, email: user[0].email, role: user[0].role_id },
+      { id: user.id, email: user.email, role: user.role_id },
       process.env.JWT_SECRET || "secret",
       { expiresIn: "1h" }
     );
     return res.status(200).json({ token: token });
 
-  } else if (user[0].role_id === 2) {
+  } else if (user.role_id === 2) {
     const token = jwt.sign(
-      { id: user[0].id, email: user[0].email, role: user[0].role_id },
+      { id: user.id, email: user.email, role: user.role_id },
       process.env.JWT_SECRET || "secret",
       { expiresIn: "1h" }
     );

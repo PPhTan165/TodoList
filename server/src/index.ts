@@ -2,10 +2,10 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import todoRoutes from "./routes/todo.route";
+import todoRoutes from "./routes/task.route";
 import authRoutes from "./routes/auth.route";
 import adminRoutes from "./routes/admin.route"
-
+import goalRoutes from "./routes/goal.route";
 
 
 
@@ -14,7 +14,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
-app.use('/api/todos', todoRoutes);
+app.use('/api/',goalRoutes)
+app.use('/api/goals', todoRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin',adminRoutes);
 

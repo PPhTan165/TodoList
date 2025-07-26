@@ -3,8 +3,8 @@ import { RowDataPacket } from "mysql2";
 export interface Task {
   title: string;
   note: string;
-  start_at: string;
-  due_at: string;
+  start_at: Date;
+  due_at: Date;
   status: string;
   goal_id: number;
   assignee_id: number;
@@ -45,8 +45,8 @@ export const createTask = async (
 ): Promise<void> => {
   const sql = `
     INSERT INTO tasks 
-    (title, note, start_at, due_at, status, goal_id, assignee_id) 
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    (title, note, start_at, due_at, goal_id, assignee_id) 
+    VALUES (?, ?, ?, ?, ?, ?)
   `;
   const { title, note, start_at, due_at, goal_id, assignee_id } = task;
   await db.query(sql, [
@@ -54,7 +54,6 @@ export const createTask = async (
     note,
     start_at,
     due_at,
-    "todo", // Default status
     goal_id,
     assignee_id,
   ]);
@@ -87,12 +86,3 @@ export const deleteTask = async (id: number, goalId: number): Promise<void> => {
   await db.query(sql, [id, goalId]);
 };
 
-export const isAdminGoalMember = async (userId: number, goalId: number): Promise<boolean> => {
-    const sql = `SELECT * FROM tasks t
-    JOIN goals g ON t.goal_id = g.id
-    JOIN goal_members gm ON g.id = gm.goal_id
-    WHERE gm.role = 'admin' AND gm.goal_id = ? AND gm.user_id = ?`;
-
-    const [rows]: any = await db.query<RowDataPacket[]>(sql, [goalId, userId]);
-    return rows.length > 0 ? true : false; 
-}

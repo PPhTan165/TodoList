@@ -12,10 +12,10 @@ import { authMiddleware } from "../middleware/auth.middleware"; // Ensure you ha
 
 const router = express.Router();
 
-router.get("/",authMiddleware, getTodos);
-router.get("/:id",authMiddleware, findTaskById);
-router.post("/",authMiddleware, createTodo);
-router.put("/:id",authMiddleware, updateTodo);
-router.delete("/:id",authMiddleware, deleteTask);
+router.get("/:goalId/",authMiddleware, getTodos);
+router.get("/:goalId/task/:taskId",authMiddleware, findTaskById);
+router.post("/:goalId/",authMiddleware, createTodo);
+router.put("/:goalId/task/:taskId",authMiddleware, updateTodo);
+router.delete("/:goalId/task/:taskId",authMiddleware, deleteTask);
 
 export default router;

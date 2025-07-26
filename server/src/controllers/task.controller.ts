@@ -1,41 +1,47 @@
 import { Request, Response } from "express";
 import * as taskModel from "../models/task.model";
-
+import { isAdminGoalMember } from "../models/goal.model";
 export const getTodos = async (req: Request, res: Response): Promise<any> => {
-  const user_id = req.user?.id;
+  const goalId = parseInt(req.params.goalId, 10);
 
-  if (!user_id) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
   try {
-    const tasks = taskModel.getTasks(user_id);
-    res.status(200).json({ tasks });
+    const tasks = await taskModel.getTasks(goalId);
+    res.status(200).json({ data: tasks });
   } catch (error) {
     res.status(500).json({ message: "Database err" });
   }
 };
 
-export const findTaskById = (req: Request, res: Response) => {
-  const { id } = req.params;
-  const goalId = req.goal?.id;
+export const findTaskById = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  const  taskId  =Number( req.params.taskId);
+  const goalId = Number(req.params.goalId);
   if (!goalId) {
     res.status(401).json({ message: "Unauthorized" });
   }
   try {
-    const task = taskModel.getTaskById(Number(id), goalId);
-  } catch (error) {}
+    const task = await taskModel.getTaskById(taskId, goalId);
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+    return res.status(200).json({ task });
+  } catch (error) {
+    return res.status(500).json({ message: "Database error" });
+  }
 };
 
-export const findTaskByUserId = (req: Request, res: Response) => {
+export const findTaskByUserId = async (req: Request, res: Response) => {
   const userId = req.user?.id;
-  const goalId = req.goal?.id;
+  const goalId = Number(req.params.goalId);
 
   if (!userId || !goalId) {
     return res.status(401).json({ message: "Unauthorized" });
   }
 
   try {
-    const result = taskModel.getTaskById(goalId, userId);
+    const result = await taskModel.getTaskById(goalId, userId);
     if (!result) {
       return res.status(404).json({ message: "Task not found" });
     }
@@ -47,13 +53,16 @@ export const findTaskByUserId = (req: Request, res: Response) => {
 
 export const createTodo = async (req: Request, res: Response): Promise<any> => {
   const { title, note, start_at, due_at } = req.body;
-  const userId = req.user?.id;
-  const goalId = req.goal?.id;
-  if (!userId || !goalId) {
-    res.status(401).json({ message: "Unauthorized" });
-    return;
-  }
+  const userId = parseInt(req.user?.id, 10)
+  const goalId = parseInt(req.params.goalId,10);
+  console.log("goalId:", goalId, "userId:", userId);
 
+  const isAdmin = await isAdminGoalMember(userId, goalId);
+  console.log("isAdmin:", isAdmin);
+
+  if(isAdmin) { 
+    return res.status(403).json({ message: "Authorization" });
+  }
   try {
     await taskModel.createTask({
       title,
@@ -71,7 +80,7 @@ export const createTodo = async (req: Request, res: Response): Promise<any> => {
 
 export const updateTodo = async (req: Request, res: Response): Promise<any> => {
   const { title, note, start_at, due_at, status } = req.body;
-  const { id } = req.params;
+  const  taskId  =Number( req.params.taskId);
   const user_id = req.user?.id;
   const goalId = req.goal?.id;
   if (!user_id) {
@@ -90,7 +99,7 @@ export const updateTodo = async (req: Request, res: Response): Promise<any> => {
         goal_id: goalId,
         assignee_id: user_id,
       },
-      Number(id),
+      taskId,
       goalId
     );
     return res.status(200).json({ message: "Task updated successfully" });
@@ -100,7 +109,7 @@ export const updateTodo = async (req: Request, res: Response): Promise<any> => {
 };
 
 export const deleteTask = async (req: Request, res: Response): Promise<any> => {
-  const { id } = req.params;
+  const  taskId  =Number( req.params.taskId);
   const goalId = req.goal?.id;
   const userId = req.user?.id;
 
@@ -110,10 +119,10 @@ export const deleteTask = async (req: Request, res: Response): Promise<any> => {
   }
 
   try {
-    if (!taskModel.isAdminGoalMember(userId, goalId)) {
+    if (!isAdminGoalMember(userId, goalId)) {
       return res.status(403).json({ message: "Forbidden" });
     }
-    await taskModel.deleteTask(Number(id), goalId);
+    await taskModel.deleteTask(taskId, goalId);
     return res.status(200).json({ message: "Task deleted successfully" });
   } catch (error) {
     return res.status(500).json({ error: "Database query failed" });

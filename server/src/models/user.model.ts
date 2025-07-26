@@ -14,25 +14,25 @@ export interface User {
 
 export const getAllUser = async (): Promise<User[]> => {
   const sql = "SELECT * FROM users WHERE role_id = ?";
-  const [rows]: any = await db.query<User[] & RowDataPacket[]>(sql, [1]);
+  const [rows]: any =await  db.query<User[] & RowDataPacket[]>(sql, [1]);
   return rows;
 };
 
 export const getUserById = async (id: number): Promise<User[]> => {
   const sql = "SELECT * FROM users WHERE id = ?";
-  const [rows]: any = await db.query<User[] & RowDataPacket[]>(sql, [id]);
+  const [rows]: any =await  db.query<User[] & RowDataPacket[]>(sql, [id]);
   return rows;
 };
 
 export const findUserByEmail = async (email: string): Promise<User[]> => {
   const sql = "SELECT * FROM users WHERE email = ?";
-  const [rows]: any = await db.query<User[] & RowDataPacket[]>(sql, [email]);
-  return rows[0];
+  const [rows]: any =await  db.query<User[] & RowDataPacket[]>(sql, [email]);
+  return rows[0] || null;
 };
 
 export const findUserByName = async (name: string): Promise<User[]> => {
-  const sql = "SELECT * FROM users WHERE username = '?' ";
-  const [rows]: any = await db.query<User[] & RowDataPacket[]>(sql, [name]);
+  const sql = "SELECT * FROM users WHERE username = ?";
+  const [rows]: any =await  db.query<User[] & RowDataPacket[]>(sql, [name]);
   return rows;
 };
 
