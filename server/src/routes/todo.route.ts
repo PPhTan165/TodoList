@@ -1,11 +1,11 @@
 import express from "express";
 import {
   getTodos,
-  getTodoById,
+  findTaskById,
   createTodo,
   updateTodo,
-  deleteTodo,
-} from "../controllers/todo.controller";
+  deleteTask,
+} from "../controllers/task.controller";
 import { authMiddleware } from "../middleware/auth.middleware"; // Ensure you have this middleware for authentication
 
 
@@ -13,9 +13,9 @@ import { authMiddleware } from "../middleware/auth.middleware"; // Ensure you ha
 const router = express.Router();
 
 router.get("/",authMiddleware, getTodos);
-router.get("/:id",authMiddleware, getTodoById);
+router.get("/:id",authMiddleware, findTaskById);
 router.post("/",authMiddleware, createTodo);
 router.put("/:id",authMiddleware, updateTodo);
-router.delete("/:id",authMiddleware, deleteTodo);
+router.delete("/:id",authMiddleware, deleteTask);
 
 export default router;
