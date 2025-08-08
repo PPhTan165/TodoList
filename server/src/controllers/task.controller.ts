@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import * as taskModel from "../models/task.model";
 import { isAdminGoalMember } from "../models/goal.model";
+
 export const getTodos = async (req: Request, res: Response): Promise<any> => {
   const goalId = parseInt(req.params.goalId, 10);
 

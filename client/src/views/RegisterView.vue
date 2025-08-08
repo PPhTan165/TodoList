@@ -4,6 +4,8 @@ import { useRouter } from "vue-router";
 import { ref } from "vue";
 import * as yup from "yup";
 
+const username = ref("");
+const phone = ref("");
 const email = ref("");
 const password = ref("");
 const confirmPassword = ref("");
@@ -14,6 +16,11 @@ const auth = useAuthStore();
 
 // Schema xác thực
 const schema = yup.object().shape({
+  username: yup.string().required("Bắt buộc nhập tên người dùng"),
+  phone: yup
+    .string()
+    .required("Bắt buộc nhập số điện thoại")
+    .min(10, "Số điện thoại phải có ít nhất 10 ký tự"),
   email: yup.string().required("Bắt buộc nhập email"),
   password: yup
     .string()
@@ -37,9 +44,14 @@ const onSubmit = async () => {
     );
 
     // Nếu hợp lệ → gửi đăng ký
-    await auth.registerUser({ email: email.value, password: password.value });
+    await auth.registerUser({
+      username: username.value,
+      email: email.value,
+      phone: phone.value,
+      password: password.value,
+    });
     router.push("/login");
-    alert('Đăng ký thành công')
+    alert("Đăng ký thành công");
   } catch (err: any) {
     // Hiển thị lỗi
     errors.value = {};
@@ -52,9 +64,20 @@ const onSubmit = async () => {
 
 <template>
   <div>
+    <label>Fullname</label>
+    <input type="text" v-model="username" />
+    <p class="error" v-if="errors.email">{{ errors.username }}</p>
+  </div>
+  <div>
     <label>Email</label>
     <input type="email" v-model="email" />
     <p class="error" v-if="errors.email">{{ errors.email }}</p>
+  </div>
+
+  <div>
+    <label>Phone</label>
+    <input type="test" v-model="email" max="10" />
+    <p class="error" v-if="errors.email">{{ errors.phone }}</p>
   </div>
 
   <div>
@@ -66,7 +89,9 @@ const onSubmit = async () => {
   <div>
     <label>Confirm Password</label>
     <input v-model="confirmPassword" type="password" />
-    <p class="error" v-if="errors.confirmPassword">{{ errors.confirmPassword }}</p>
+    <p class="error" v-if="errors.confirmPassword">
+      {{ errors.confirmPassword }}
+    </p>
   </div>
 
   <button type="submit" @click="onSubmit">Register</button>

@@ -11,6 +11,10 @@
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^7.0.0",
+    "@fortawesome/free-solid-svg-icons": "^7.0.0",
+    "@fortawesome/react-fontawesome": "^0.2.3",
+    "@fortawesome/vue-fontawesome": "^3.1.1",
     "axios": "^1.10.0",
     "jwt-decode": "^4.0.0",
     "pinia": "^3.0.1",

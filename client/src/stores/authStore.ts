@@ -4,17 +4,24 @@ import { jwtDecode } from "jwt-decode";
 
 interface JwtPayload {
   id: number;
+  username: string;
   email: string;
+  phone: string;
 }
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
     token: localStorage.getItem("token") || null,
-    user: null as { id: number; email: string } | null,
+    user: null as {
+      id: number;
+      username: string;
+      phone: string;
+      email: string;
+    } | null,
   }),
 
   actions: {
-    async loginUser(payload: { email: string; password: string }) {
+    async loginUser(payload: { username: string; password: string }) {
       const res = await login(payload);
       this.token = res.data.token;
       localStorage.setItem("token", this.token ?? "");
@@ -22,7 +29,12 @@ export const useAuthStore = defineStore("auth", {
       return res;
     },
 
-    async registerUser(payload: { email: string; password: string }) {
+    async registerUser(payload: {
+      username: string;
+      email: string;
+      phone: string;
+      password: string;
+    }) {
       const res = await register(payload);
       this.token = res.data.token;
       localStorage.setItem("token", this.token ?? "");
@@ -40,7 +52,12 @@ export const useAuthStore = defineStore("auth", {
       if (token) {
         try {
           const decode = jwtDecode<JwtPayload>(token);
-          this.user = { id: decode.id, email: decode.email };
+          this.user = {
+            id: decode.id,
+            username: decode.username,
+            phone: decode.phone,
+            email: decode.email,
+          };
           localStorage.setItem("user", JSON.stringify(this.user));
         } catch (error) {
           console.log(error);

@@ -1,43 +1,72 @@
 <script setup lang="ts">
 import { useTodoStore } from "@/stores/todoStore";
-import { onMounted, ref } from "vue";
-import CardComponent from "@/components/card/CardComponent.vue";
-import { useRouter } from "vue-router";
-import draggable from "vuedraggable";
 import { useAuthStore } from "@/stores/authStore";
+import GoalComponent from "@/components/Goals/GoalComponent.vue";
+import GoalSkeletonComponent from "@/components/Goals/GoalSkeletonComponent.vue";
+import HeaderComponent from "@/components/header/HeaderComponent.vue";
 
-const router = useRouter();
 const todoStore = useTodoStore();
 const authStore = useAuthStore();
-onMounted(() => {
-  todoStore.fetchTodos();
-});
 
-
-
+const goals = [
+  {
+    id: 1,
+    title: "Card 1",
+    description: "Description for Card 1",
+    countMember: 3,
+  },
+  {
+    id: 2,
+    title: "Card 2",
+    description: "Description for Card 2",
+    countMember: 5,
+  },
+  {
+    id: 3,
+    title: "Card 3",
+    description: "Description for Card 3",
+    countMember: 2,
+  },
+  {
+    id: 4,
+    title: "Card 4",
+    description: "Description for Card 1",
+    countMember: 3,
+  },
+];
 </script>
 
 <template>
   <main>
-    <h1>TODO LIST</h1>
-    <input
-      type="text"
-      v-model="todoStore.txtSearch"
-      placeholder="Search todos by title"
-    />
-    <div class="container" v-if="authStore.isAuthenticated">
-      <div class="item" v-for="todo in todoStore.filteredTodos">
-        
-        <CardComponent 
-        :title="todo.title"
-        :id = "todo.id" />
+    <HeaderComponent />
+
+    <section>
+      <h1>TRANG CHỦ</h1>
+      <input
+        type="text"
+        v-model="todoStore.txtSearch"
+        placeholder="Search todos by title"
+      />
+      
+      <div class="container">
+        <div class="goal-user" v-for="goal in goals">
+          <GoalComponent
+            :id="goal.id"
+            :title="goal.title"
+            :description="goal.description"
+            :countMember="goal.countMember"
+          />
+        </div>
+        <GoalSkeletonComponent />
       </div>
-    </div>
+    </section>
+
+    <!-- <div class="container" v-if="authStore.isAuthenticated">
+        
+      </div>
     <div v-else>
       Trang chủ Todo List
-    </div>
-
-
+    </div> -->
   </main>
 </template>
 
@@ -49,13 +78,12 @@ h1 {
   color: #333;
   font-weight: bold;
 }
-.container{ 
+.container {
   display: grid;
-  grid-template-columns: repeat(2,1fr);
+  grid-template-columns: repeat(3, 1fr);
 }
 .item {
   max-width: 450px;
-
 }
 input {
   width: 100%;

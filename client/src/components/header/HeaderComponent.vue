@@ -5,20 +5,25 @@ import { computed, onMounted, ref } from "vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
-const userEmail = computed(() => authStore.user?.email);
-console.log(userEmail)
+const username = computed(() => authStore.user?.username || "Guest");
 const isToggleDropDown = ref(false);
 
-
-const handleDropDown = () => { 
+const toggleDropDown = () => {
   isToggleDropDown.value = !isToggleDropDown.value;
+};
+
+const profile = () => {
+  router.push("/profile/:Userid");
+};
+const scheduel = () => {
+  
 }
 
-const goToProfile = () => {
-  router.push('/profile/:id');
+const team = () => {
+
 }
 
-const handleLogout = () => {
+const logout = () => {
   authStore.logout();
   router.push("/");
 };
@@ -26,28 +31,36 @@ const handleLogout = () => {
 onMounted(() => {
   authStore.loadUserFromToken();
 });
+
+
 </script>
 
 <template>
   <nav>
-    <div class="nav-left">
-      <RouterLink class="nav-item" to="/">Home</RouterLink>
-      <RouterLink class="nav-item" to="/create">Add</RouterLink>
+    <div class="left-nav">
+      <RouterLink to="/"
+        ><img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Notion-logo.svg/1024px-Notion-logo.svg.png"
+          alt="logo"
+          width="50px"
+          height="50px"
+      /></RouterLink> 
     </div>
 
-    <div class="nav-right">
-      <div class="dropdown-container" @click="handleDropDown" v-if="authStore.isAuthenticated">
-        <span class="username">Xin chào {{ userEmail.toUpperCase().split('@')[0] }} </span>
-        <div v-if="isToggleDropDown" class="dropdown-menu">
-          <ul>
-            <li @click="goToProfile"> Profile</li>
-            <li @click="handleLogout"> Logout</li>
-          </ul>
-        </div>
+    <div class="right-nav">
+      <div v-if="!authStore.isAuthenticated">
+        <RouterLink class="nav-item" to="/login">ĐĂNG NHẬP</RouterLink>
       </div>
       <div v-else>
-        <RouterLink class="nav-item" to="/login">Login</RouterLink>
-        <RouterLink class="nav-item" to="/register">Register</RouterLink>
+        <span class="username">{{ username }}</span>
+        <div class="dropdown-menu" v-if="isToggleDropDown" @click="toggleDropDown">
+          <ul>
+            <li @click="profile">Hồ sơ cá nhân</li>
+            <li @click="scheduel">Lịch công việc</li>
+            <li @click="team">Nhóm</li>
+            <li @click="logout">Đăng xuất</li>
+          </ul>
+        </div>
       </div>
     </div>
   </nav>
@@ -57,40 +70,22 @@ onMounted(() => {
 <style scoped>
 nav {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   padding: 1rem;
 }
 
-nav a {
-  width: 100px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 1.2rem;
-  color: white;
-  margin-right: 1rem;
+nav .right-nav .nav-item {
   text-decoration: none;
-  border: 1px solid transparent;
-  border-radius: 0.5rem;
-  background-color: rgb(69, 171, 240);
-  padding: 1rem 0.5rem;
-  transition: all 0.3s ease;
-}
-nav a:hover {
-  border: 1px solid rgb(69, 171, 240);
-  background-color: white;
-  color: rgb(69, 171, 240);
+  color: #838383;
+  font-weight: bold;
+  font-size: 1.4rem;
+  transition: 0.3s ease all;
 }
 
-.nav-item {
-  display: inline-block;
-  margin: 0 10px;
-  padding: 0.8rem 1rem;
-  border-radius: 0.5rem;
-  color: white;
-  text-decoration: none;
-  background-color: rgb(69, 171, 240);
-  border: 1px solid rgb(69, 171, 240);
+nav .right-nav .nav-item:hover {
+  color: rgb(0, 0, 0);
 }
+
 .dropdown-container {
   position: relative;
   cursor: pointer;
@@ -109,7 +104,7 @@ nav a:hover {
   border: 1px solid #ccc;
   border-radius: 8px;
   width: 150px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   z-index: 100;
 }
 

@@ -4,24 +4,24 @@ import { useAuthStore } from "@/stores/authStore";
 import { useRouter } from "vue-router";
 import * as yup from "yup";
 
-const email = ref("");
+const username = ref("");
 const password = ref("");
 const authStore = useAuthStore();
 const router = useRouter();
 const schema = yup.object().shape({
-  email: yup.string().required("Username không được để trống"),
+  username: yup.string().required("Username không được để trống"),
   password: yup.string().required("Password không được để trống"),
 });
 
 const handleLogin = async () => {
   try {
     await schema.validate(
-      { email: email.value, password: password.value },
+      { username: username.value, password: password.value },
       { abortEarly: false }
     )
 
     // chờ loginUser hoàn tất
-    await authStore.loginUser({ email: email.value, password: password.value })
+    await authStore.loginUser({ username: username.value, password: password.value })
 
     // đảm bảo vue đã phản ứng xong
     await nextTick()
@@ -41,12 +41,10 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <div>
-    <h2>Đăng nhập</h2>
-    <input v-model="email" placeholder="email" required />
-    <input v-model="password" type="password" placeholder="Password" required />
-    <button class="btn-action" type="submit" @click="handleLogin">Login</button>
-  </div>
+  <main>
+    
+  </main>
+   
 </template>
 
 <style scoped>
