@@ -4,7 +4,7 @@ import { jwtDecode } from "jwt-decode";
 
 interface JwtPayload {
   id: number;
-  username: string;
+  fullname: string;
   email: string;
   phone: string;
 }
@@ -14,14 +14,14 @@ export const useAuthStore = defineStore("auth", {
     token: localStorage.getItem("token") || null,
     user: null as {
       id: number;
-      username: string;
+      fullname: string;
       phone: string;
       email: string;
     } | null,
   }),
 
   actions: {
-    async loginUser(payload: { username: string; password: string }) {
+    async loginUser(payload: { email: string; password: string }) {
       const res = await login(payload);
       this.token = res.data.token;
       localStorage.setItem("token", this.token ?? "");
@@ -30,7 +30,7 @@ export const useAuthStore = defineStore("auth", {
     },
 
     async registerUser(payload: {
-      username: string;
+      fullname: string;
       email: string;
       phone: string;
       password: string;
@@ -54,7 +54,7 @@ export const useAuthStore = defineStore("auth", {
           const decode = jwtDecode<JwtPayload>(token);
           this.user = {
             id: decode.id,
-            username: decode.username,
+            fullname: decode.fullname,
             phone: decode.phone,
             email: decode.email,
           };

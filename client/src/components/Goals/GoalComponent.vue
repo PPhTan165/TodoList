@@ -1,33 +1,22 @@
 <script setup lang="ts">
 import { useGoalStore } from "@/stores/goalStore";
-import { defineProps, defineEmits, ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRouter } from "vue-router";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 const router = useRouter();
 const goalStore = useGoalStore();
-const isSettingVisible = ref<boolean>(false);
-const dropdown = document.querySelector(".dropdown");
-const items = document.querySelector(".dropdown-items");
 
-const props = defineProps({
-  id: {
-    type: Number,
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  countMember: {
-    type: Number,
-    default: 1,
-  },
+type GoalCardProps = {
+  id: number;
+  title: String;
+  description: String;
+  countMember?: number
+}
+
+const props = withDefaults(defineProps<GoalCardProps>(),{
+  countMember: 1
 });
+
 
 const emits = defineEmits<{
   (event: "detail-click", id: number): void;
@@ -43,9 +32,6 @@ const handleRemoveGoal = () => {
   router.push("/");
 };
 
-const isToggleSetting = () => {
-  isSettingVisible.value = !isSettingVisible.value;
-};
 </script>
 
 <template>

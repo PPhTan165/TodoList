@@ -5,9 +5,9 @@ import { computed, onMounted, ref } from "vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
-const username = computed(() => authStore.user?.username || "Guest");
+const username = computed(() => authStore.user?.username);
 const isToggleDropDown = ref(false);
-
+console.log(authStore.user?.email)
 const toggleDropDown = () => {
   isToggleDropDown.value = !isToggleDropDown.value;
 };
@@ -52,7 +52,7 @@ onMounted(() => {
         <RouterLink class="nav-item" to="/login">ĐĂNG NHẬP</RouterLink>
       </div>
       <div v-else>
-        <span class="username">{{ username }}</span>
+        <span class="username">{{ authStore.user?.email }}</span>
         <div class="dropdown-menu" v-if="isToggleDropDown" @click="toggleDropDown">
           <ul>
             <li @click="profile">Hồ sơ cá nhân</li>
