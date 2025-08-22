@@ -40,14 +40,17 @@ const goals = [
   <main>
     <HeaderComponent />
 
-    <section>
+    <section class="home-view">
       <h1>TRANG CHỦ</h1>
-      <input
+      <div class="search-input">
+
+        <input
         type="text"
         v-model="todoStore.txtSearch"
-        placeholder="Search todos by title"
-      />
-      
+        placeholder="Search your projects..."
+        />
+      </div>
+
       <div class="container">
         <div class="goal-user" v-for="goal in goals">
           <GoalComponent
@@ -71,6 +74,14 @@ const goals = [
 </template>
 
 <style scoped>
+.home-view {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 100vw;
+  padding: 20px;
+}
+
 h1 {
   text-align: center;
   margin-bottom: 20px;
@@ -78,20 +89,27 @@ h1 {
   color: #333;
   font-weight: bold;
 }
-.container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-}
-.item {
-  max-width: 450px;
+.search-input {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 input {
-  width: 100%;
+  width: 800px;
   padding: 1rem 1rem;
   margin-bottom: 16px;
   border-radius: 8px;
   border: 1px solid #ccc;
   font-size: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  margin: 0 1.5rem;
+
 }
 </style>

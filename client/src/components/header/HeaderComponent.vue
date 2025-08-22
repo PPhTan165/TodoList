@@ -15,13 +15,9 @@ const toggleDropDown = () => {
 const profile = () => {
   router.push("/profile/:Userid");
 };
-const scheduel = () => {
-  
-}
+const scheduel = () => {};
 
-const team = () => {
-
-}
+const team = () => {};
 
 const logout = () => {
   authStore.logout();
@@ -31,39 +27,40 @@ const logout = () => {
 onMounted(() => {
   authStore.loadUserFromToken();
 });
-
-
 </script>
 
 <template>
-  <nav>
-    <div class="left-nav">
-      <RouterLink to="/"
-        ><img
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Notion-logo.svg/1024px-Notion-logo.svg.png"
-          alt="logo"
-          width="50px"
-          height="50px"
-      /></RouterLink> 
-    </div>
-
-    <div class="right-nav">
-      <div v-if="!authStore.isAuthenticated">
-        <RouterLink class="nav-item" to="/login">ĐĂNG NHẬP</RouterLink>
+    <nav>
+      <div class="left-nav">
+        <RouterLink to="/"
+          ><img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Notion-logo.svg/1024px-Notion-logo.svg.png"
+            alt="logo"
+            width="50px"
+            height="50px"
+        /></RouterLink>
       </div>
-      <div v-else>
-        <span class="username">{{ username }}</span>
-        <div class="dropdown-menu" v-if="isToggleDropDown" @click="toggleDropDown">
-          <ul>
-            <li @click="profile">Hồ sơ cá nhân</li>
-            <li @click="scheduel">Lịch công việc</li>
-            <li @click="team">Nhóm</li>
-            <li @click="logout">Đăng xuất</li>
-          </ul>
+
+      <div class="right-nav">
+        <div v-if="!authStore.isAuthenticated">
+          <RouterLink class="nav-item" to="/login">ĐĂNG NHẬP</RouterLink>
+        </div>
+        <div v-else>
+          <span class="username" @click="toggleDropDown">{{ username }}</span>
+          <div
+            class="dropdown-menu"
+            v-if="isToggleDropDown"
+          >
+            <ul>
+              <li @click="profile">Hồ sơ cá nhân</li>
+              <li @click="scheduel">Lịch công việc</li>
+              <li @click="team">Nhóm</li>
+              <li @click="logout">Đăng xuất</li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
-  </nav>
+    </nav>
   <RouterView />
 </template>
 
@@ -71,8 +68,12 @@ onMounted(() => {
 nav {
   display: flex;
   justify-content: space-between;
-  padding: 1rem;
+  align-items: center;
+  padding: 0 2rem;
+  max-width: 1280px; /* hoặc 1280px tùy thiết kế */
+  margin: 0 auto;    /* căn giữa trong header */
 }
+
 
 nav .right-nav .nav-item {
   text-decoration: none;

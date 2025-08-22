@@ -84,6 +84,7 @@ const isToggleSetting = () => {
 <style scoped>
 .goal-card {
   position: relative;
+  min-width: 400px;
   height: 150px;
   border: 2px solid #000000;
   border-radius: 8px;

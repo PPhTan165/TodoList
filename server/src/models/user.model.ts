@@ -26,8 +26,8 @@ export const getUserById = async (id: number): Promise<User[]> => {
 
 export const findUserByEmail = async (email: string): Promise<User[]> => {
   const sql = "SELECT * FROM users WHERE email = ?";
-  const [rows]: any =await  db.query<User[] & RowDataPacket[]>(sql, [email]);
-  return rows[0] || null;
+  const [rows]: any = await  db.query<User[] & RowDataPacket[]>(sql, [email]);
+  return rows || null;
 };
 
 export const findUserByName = async (name: string): Promise<User[]> => {

@@ -61,9 +61,11 @@ export const createTodo = async (req: Request, res: Response): Promise<any> => {
   const isAdmin = await isAdminGoalMember(userId, goalId);
   console.log("isAdmin:", isAdmin);
 
-  if(isAdmin) { 
+  //Kiểm tra xem người dùng có quyền tạo task trong goal này không
+  if(!isAdmin) { 
     return res.status(403).json({ message: "Authorization" });
   }
+  
   try {
     await taskModel.createTask({
       title,
