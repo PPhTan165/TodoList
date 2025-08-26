@@ -1,8 +1,9 @@
 <script setup>
-
 import { RouterLink, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/authStore";
+
 const router = useRouter();
+const authStore = useAuthStore();
 
 const goHome = () => {
   router.push("/");
@@ -10,6 +11,27 @@ const goHome = () => {
 
 const register = () => {
   router.push("/register");
+};
+
+const handleLogin = () => {
+  const email = authStore.email;
+  const password = authStore.password;
+  console.log(`emmail: ${email}, 
+  password: ${password}`);
+  if (!email || !password) {
+    alert("Please enter both email and password.");
+    return;
+  }
+  authStore.loginUser({ email, password })
+    .then(() => {
+      console.log("Login successful");
+      router.push("/");
+    })
+    .catch((error) => {
+      console.error("Login failed:", error);
+      alert("Login failed. Please check your credentials.");
+    });
+  console.log("Login button clicked");
 };
 </script>
 
@@ -24,34 +46,35 @@ const register = () => {
         <button class="register-btn" @click="register">Đăng ký ▶</button>
 
         <h2 class="title">ĐĂNG NHẬP</h2>
+        <form @submit.prevent="handleLogin">
+          <div class="content">
+            <!-- Left side -->
+            <div class="left">
+              <label>Email</label>
+              <input type="email" v-model="authStore.email" />
 
-        <div class="content">
-          <!-- Left side -->
-          <div class="left">
-            <label>Email</label>
-            <input type="email" />
+              <label>Password</label>
+              <input type="password" v-model="authStore.password" />
 
-            <label>Password</label>
-            <input type="password" />
+              <div class="remember">
+                <input type="checkbox" id="remember" tabindex="-1" />
+                <label for="remember">Ghi nhớ đăng nhập</label>
+              </div>
 
-            <div class="remember">
-              <input type="checkbox" id="remember" tabindex="-1" />
-              <label for="remember">Ghi nhớ đăng nhập</label>
+              <button class="login-btn" type="submit">Đăng nhập</button>
             </div>
 
-            <button class="login-btn">Đăng nhập</button>
-          </div>
+            <!-- Divider -->
+            <div class="divider"></div>
 
-          <!-- Divider -->
-          <div class="divider"></div>
-
-          <!-- Right side -->
-          <div class="right">
-            <button class="social-btn google">Login with Google</button>
-            <button class="social-btn facebook">Login with Facebook</button>
-            <button class="social-btn github">Login with Github</button>
+            <!-- Right side -->
+            <div class="right">
+              <button class="social-btn google">Login with Google</button>
+              <button class="social-btn facebook">Login with Facebook</button>
+              <button class="social-btn github">Login with Github</button>
+            </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </section>

@@ -1,39 +1,19 @@
 <script setup lang="ts">
-import { useTodoStore } from "@/stores/todoStore";
 import { useAuthStore } from "@/stores/authStore";
+import { useGoalStore } from "@/stores/goalStore";
 import GoalComponent from "@/components/Goals/GoalComponent.vue";
 import GoalSkeletonComponent from "@/components/Goals/GoalSkeletonComponent.vue";
 import HeaderComponent from "@/components/header/HeaderComponent.vue";
+import { onMounted, ref } from "vue";
 
-const todoStore = useTodoStore();
+const txtSearch = ref("");
+const countMember = ref(0);
 const authStore = useAuthStore();
+const goalStore = useGoalStore();
 
-const goals = [
-  {
-    id: 1,
-    title: "Card 1",
-    description: "Description for Card 1",
-    countMember: 3,
-  },
-  {
-    id: 2,
-    title: "Card 2",
-    description: "Description for Card 2",
-    countMember: 5,
-  },
-  {
-    id: 3,
-    title: "Card 3",
-    description: "Description for Card 3",
-    countMember: 2,
-  },
-  {
-    id: 4,
-    title: "Card 4",
-    description: "Description for Card 1",
-    countMember: 3,
-  },
-];
+onMounted(async () => {
+  await goalStore.fetchGoals();
+});
 </script>
 
 <template>
@@ -43,33 +23,25 @@ const goals = [
     <section class="home-view">
       <h1>TRANG CHỦ</h1>
       <div class="search-input">
-
         <input
-        type="text"
-        v-model="todoStore.txtSearch"
-        placeholder="Search your projects..."
+          type="text"
+          v-model="txtSearch"
+          placeholder="Search your projects..."
         />
       </div>
 
-      <div class="container">
-        <div class="goal-user" v-for="goal in goals">
+      <div class="container" v-if="authStore.isAuthenticated">
+        <div class="goal-user" v-for="goal in goalStore.goals">
           <GoalComponent
             :id="goal.id"
             :title="goal.title"
             :description="goal.description"
-            :countMember="goal.countMember"
+            :countMember="countMember"
           />
         </div>
         <GoalSkeletonComponent />
       </div>
     </section>
-
-    <!-- <div class="container" v-if="authStore.isAuthenticated">
-        
-      </div>
-    <div v-else>
-      Trang chủ Todo List
-    </div> -->
   </main>
 </template>
 
@@ -110,6 +82,5 @@ input {
   gap: 20px;
   padding: 20px;
   margin: 0 1.5rem;
-
 }
 </style>

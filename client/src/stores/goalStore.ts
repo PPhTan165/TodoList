@@ -19,13 +19,13 @@ export const useGoalStore = defineStore("goal", {
     goals: [] as Goal[],
     loading: false,
   }), 
-  
+  persist: true,
   actions: {
     async fetchGoals() {
       this.loading = true;
       try {
         const response = await getAllGoals();
-        this.goals = response.data;
+        this.goals = response.data.data;
       } catch (error) {
         console.error("Error fetching goals:", error);
       } finally {
@@ -83,5 +83,17 @@ export const useGoalStore = defineStore("goal", {
         this.loading = false;
       }
     },
+
+    async countMembers(goalId: number) {
+      // this.loading = true;
+      // try {
+      //   const response = await getGoalById(goalId);
+      //   return response.data.countMember;
+      // } catch (error) {
+      //   console.error("Error counting members:", error);
+      // } finally {
+      //   this.loading = false;
+      // }
+    }
   }
 })

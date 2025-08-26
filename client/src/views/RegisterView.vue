@@ -2,99 +2,96 @@
 import { useAuthStore } from "@/stores/authStore";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
-import * as yup from "yup";
+import { registerSchema } from "@/validation/authSchema";
+import { useForm, useField, validate } from "vee-validate";
 
-const username = ref("");
-const phone = ref("");
-const email = ref("");
-const password = ref("");
-const confirmPassword = ref("");
 const errors = ref<Record<string, string>>({});
 
 const router = useRouter();
-const auth = useAuthStore();
-
-// Schema xác thực
-const schema = yup.object().shape({
-  username: yup.string().required("Bắt buộc nhập tên người dùng"),
-  phone: yup
-    .string()
-    .required("Bắt buộc nhập số điện thoại")
-    .min(10, "Số điện thoại phải có ít nhất 10 ký tự"),
-  email: yup.string().required("Bắt buộc nhập email"),
-  password: yup
-    .string()
-    .required("Bắt buộc nhập password")
-    .min(6, "Tối thiểu 6 ký tự"),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref("password")], "Mật khẩu xác nhận không khớp")
-    .required("Nhập lại mật khẩu"),
+const authStore = useAuthStore();
+const schema = registerSchema;
+const confirmPassword = ref("");
+const { handleSubmit } = useForm({
+  validationSchema: schema,
 });
 
-const onSubmit = async () => {
-  try {
-    await schema.validate(
-      {
-        email: email.value,
-        password: password.value,
-        confirmPassword: confirmPassword.value,
-      },
-      { abortEarly: false }
-    );
+const { value: username, errorMessage: usernameError } = useField("username");
+const { value: phone, errorMessage: phoneError } = useField("phone");
+const { value: email, errorMessage: emailError } = useField("email");
+const { value: password, errorMessage: passwordError } = useField("password");
 
-    // Nếu hợp lệ → gửi đăng ký
-    await auth.registerUser({
-      username: username.value,
-      email: email.value,
-      phone: phone.value,
-      password: password.value,
-    });
-    router.push("/login");
-    alert("Đăng ký thành công");
-  } catch (err: any) {
-    // Hiển thị lỗi
-    errors.value = {};
-    err.inner.forEach((e: any) => {
-      errors.value[e.path] = e.message;
-    });
+const onSubmit = handleSubmit(async (values) => {
+
+  if(password.value !== confirmPassword.value) {
+    errors.value.confirmPassword = "Passwords do not match";
+    return;
   }
-};
+  console.log(values);
+  try {
+    await authStore.registerUser({
+      username: values.username,
+      phone: values.phone,
+      email: values.email,
+      password: values.password,
+    })
+    router.push("/login");
+
+  } catch (error: any) {
+    throw new Error(error);
+  }
+
+});
 </script>
 
 <template>
-  <div>
-    <label>Fullname</label>
-    <input type="text" v-model="username" />
-    <p class="error" v-if="errors.email">{{ errors.username }}</p>
-  </div>
-  <div>
-    <label>Email</label>
-    <input type="email" v-model="email" />
-    <p class="error" v-if="errors.email">{{ errors.email }}</p>
-  </div>
+  <section>
+    <div class="container">
+      <div class="login-box">
+        <!-- Quay lại -->
+        <button class="back-btn" @click="router.push(`/login`)">
+          ◀ Quay lại
+        </button>
 
-  <div>
-    <label>Phone</label>
-    <input type="test" v-model="email" max="10" />
-    <p class="error" v-if="errors.email">{{ errors.phone }}</p>
-  </div>
+        <h2 class="title">ĐĂNG KÝ</h2>
+        <form @submit.prevent="onSubmit()">
+          <div class="content">
+            <!-- Left side -->
+            <div class="left">
+              <label>Fullname</label>
+              <input type="text" v-model="username" />
+              <span class="error">{{ usernameError }}</span>
 
-  <div>
-    <label>Password</label>
-    <input v-model="password" type="password" />
-    <p class="error" v-if="errors.password">{{ errors.password }}</p>
-  </div>
+              <label>Phone</label>
+              <input type="text" v-model="phone" maxlength="10" />
+              <span class="error">{{ phoneError }}</span>
 
-  <div>
-    <label>Confirm Password</label>
-    <input v-model="confirmPassword" type="password" />
-    <p class="error" v-if="errors.confirmPassword">
-      {{ errors.confirmPassword }}
-    </p>
-  </div>
+              <label>Email</label>
+              <input type="email" v-model="email" />
+              <span class="error">{{ emailError }}</span>
 
-  <button type="submit" @click="onSubmit">Register</button>
+              <label>Password</label>
+              <input type="password"  v-model="password"/>
+              <span class="error">{{ passwordError }}</span>
+
+              <label>Confirm Password</label>
+              <input type="password" v-model="confirmPassword" />
+            </div>
+
+            <!-- Divider -->
+            <div class="divider"></div>
+
+            <!-- Right side -->
+            <div class="right">
+              <button class="social-btn google">Login with Google</button>
+              <button class="social-btn facebook">Login with Facebook</button>
+              <button class="social-btn github">Login with Github</button>
+              <button class="register-btn" type="submit">Đăng ký</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
 </template>
 
 <style scoped>
@@ -102,25 +99,114 @@ const onSubmit = async () => {
   color: red;
   font-size: 0.9rem;
 }
-input {
-  width: 100%;
-  padding: 1rem;
-  margin-bottom: 16px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw; /* full chiều rộng */
+  height: 100vh; /* full chiều cao */
+  background: #f5f5f5;
+  background-size: cover;
+  background-attachment: fixed; /* luôn full màn hình */
 }
-button {
-  padding: 1rem;
-  border-radius: 8px;
+
+/* Hộp login */
+.login-box {
+  position: relative;
+  background: #fff;
+  padding: 50px 70px;
+  width: 1200px; /* tỉ lệ desktop hợp lý */
+  max-width: 95%; /* responsive cho màn nhỏ hơn */
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Nút top */
+.back-btn {
+  position: absolute;
+  top: 20px;
+  background: none;
   border: none;
-  background-color: #007bff;
-  color: white;
-  font-size: 1rem;
+  color: #555;
   cursor: pointer;
+  font-size: 15px;
 }
-button:hover {
-  background-color: #0056b3;
+
+.back-btn {
+  left: 25px;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+/* Layout chia 2 */
+.content {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 40px;
+}
+
+.left,
+.right {
+  display: flex;
+  flex-direction: column;
+}
+
+.left label {
+  margin-top: 12px;
+  font-size: 15px;
+}
+
+.left input[type="email"],
+.left input[type="password"],
+.left input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+.register-btn {
+  padding: 12px;
+  background: #2196f3;
+  margin-top: 20px;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.register-btn:hover {
+  background: #1976d2;
+}
+
+/* Đường kẻ chia */
+.divider {
+  background: #ccc;
+}
+.right {
+  margin-top: 35px;
+}
+/* Nút social */
+.social-btn {
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 1px solid #555;
+  border-radius: 6px;
+  background: white;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.social-btn:hover {
+  background: #f2f2f2;
 }
 </style>

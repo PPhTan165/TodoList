@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { login, register } from "@/api/auth";
 import { jwtDecode } from "jwt-decode";
 
-interface JwtPayload {
+interface User {
   id: number;
   username: string;
   email: string;
@@ -21,8 +21,9 @@ export const useAuthStore = defineStore("auth", {
   }),
 
   actions: {
-    async loginUser(payload: { username: string; password: string }) {
+    async loginUser(payload: { email: string; password: string }) {
       const res = await login(payload);
+      console.log(res);
       this.token = res.data.token;
       localStorage.setItem("token", this.token ?? "");
       this.loadUserFromToken();
@@ -35,9 +36,20 @@ export const useAuthStore = defineStore("auth", {
       phone: string;
       password: string;
     }) {
-      const res = await register(payload);
-      this.token = res.data.token;
-      localStorage.setItem("token", this.token ?? "");
+      try {
+        const res = await register(payload);
+        this.token = res.data.token;
+        localStorage.setItem("token", this.token ?? "");
+      } catch (error: any) {
+        if (error.response) {
+          throw {
+            status: error.response.status,
+            message: error.response.data.message || "Lỗi đăng ký",
+          };
+        } else {
+          throw { status: 500, message: "Server error" };
+        }
+      }
     },
 
     logout() {
@@ -51,7 +63,7 @@ export const useAuthStore = defineStore("auth", {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const decode = jwtDecode<JwtPayload>(token);
+          const decode = jwtDecode<User>(token);
           this.user = {
             id: decode.id,
             username: decode.username,

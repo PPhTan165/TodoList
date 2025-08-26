@@ -11,7 +11,7 @@ export const register = async (
 ): Promise<any> => {
   const { username, email, phone, password } = req.body;
   const hashed = await bcrypt.hash(password, 10);
-  const existing: any = await UserModel.findUserByEmail(email);
+  const existing: any = await UserModel.existsUserByEmail(email);
 
   if (!email || !password || !username || !phone) {
     return res.status(400).json({ message: "Missing field" });
@@ -21,6 +21,7 @@ export const register = async (
     console.log(existing);
     return res.status(400).json({ message: "Email already exist" });
   }
+
   try {
     await UserModel.createUser({ username, email, phone, password: hashed });
     return res.status(200).json({ message: "User registered" });
