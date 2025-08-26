@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
 import { useAuthStore } from "@/stores/authStore";
 import { useGoalStore } from "@/stores/goalStore";
 import GoalComponent from "@/components/Goals/GoalComponent.vue";
 import GoalSkeletonComponent from "@/components/Goals/GoalSkeletonComponent.vue";
 import HeaderComponent from "@/components/header/HeaderComponent.vue";
-import { onMounted, ref } from "vue";
-
+import CourselComponent from "@/components/CouselComponent.vue";
 const txtSearch = ref("");
 const countMember = ref(0);
 const authStore = useAuthStore();
@@ -22,24 +22,31 @@ onMounted(async () => {
 
     <section class="home-view">
       <h1>TRANG CHỦ</h1>
-      <div class="search-input">
-        <input
-          type="text"
-          v-model="txtSearch"
-          placeholder="Search your projects..."
-        />
-      </div>
-
-      <div class="container" v-if="authStore.isAuthenticated">
-        <div class="goal-user" v-for="goal in goalStore.goals">
-          <GoalComponent
-            :id="goal.id"
-            :title="goal.title"
-            :description="goal.description"
-            :countMember="countMember"
+      <div class="main" v-if="authStore.isAuthenticated">
+        <div class="search-input">
+          <input
+            type="text"
+            v-model="txtSearch"
+            placeholder="Search your projects..."
           />
         </div>
-        <GoalSkeletonComponent />
+        <div class="container">
+          <div class="goal-user" v-for="goal in goalStore.goals">
+            <GoalComponent
+              :id="goal.id"
+              :title="goal.title"
+              :description="goal.description"
+              :countMember="countMember"
+            />
+          </div>
+          <GoalSkeletonComponent />
+        </div>
+      </div>
+
+      <div v-else>
+        <h2 style="text-align: center; color: #555">
+          <CourselComponent />
+        </h2>
       </div>
     </section>
   </main>

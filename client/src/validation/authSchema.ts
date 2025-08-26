@@ -5,7 +5,7 @@ export const loginSchema = yup.object().shape({
     .string()
     .email("Email không hợp lệ")
     .required("Email không được để trống"),
-  password: yup.string().required("Mật khẩu không được để trống"),
+  password: yup.string().required("Mật khẩu không được để trống"),  
 });
 
 export const registerSchema = yup.object().shape({

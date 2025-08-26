@@ -3,7 +3,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { registerSchema } from "@/validation/authSchema";
-import { useForm, useField, validate } from "vee-validate";
+import { useForm, useField } from "vee-validate";
 
 const errors = ref<Record<string, string>>({});
 
@@ -26,7 +26,6 @@ const onSubmit = handleSubmit(async (values) => {
     errors.value.confirmPassword = "Passwords do not match";
     return;
   }
-  console.log(values);
   try {
     await authStore.registerUser({
       username: values.username,

@@ -1,38 +1,40 @@
-<script setup>
-import { RouterLink, useRouter } from "vue-router";
+<script setup lang="ts">
+import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/authStore";
+import { loginSchema } from "@/validation/authSchema";
+import { useForm, useField } from "vee-validate";
 
 const router = useRouter();
 const authStore = useAuthStore();
+const schema = loginSchema;
 
 const goHome = () => {
   router.push("/");
 };
 
-const register = () => {
+const goRegister = () => {
   router.push("/register");
 };
 
-const handleLogin = () => {
-  const email = authStore.email;
-  const password = authStore.password;
-  console.log(`emmail: ${email}, 
-  password: ${password}`);
-  if (!email || !password) {
-    alert("Please enter both email and password.");
-    return;
-  }
-  authStore.loginUser({ email, password })
-    .then(() => {
-      console.log("Login successful");
-      router.push("/");
-    })
-    .catch((error) => {
-      console.error("Login failed:", error);
-      alert("Login failed. Please check your credentials.");
+const { handleSubmit } = useForm({
+  validationSchema: schema,
+});
+
+const { value: email, errorMessage: emailError } = useField("email");
+const { value: password, errorMessage: passwordError } = useField("password");
+
+const onSubmit = handleSubmit(async (value) => {
+  console.log("Login form values:", value);
+  try {
+    await authStore.loginUser({
+      email: value.email,
+      password: value.password,
     });
-  console.log("Login button clicked");
-};
+    router.push("/");
+  } catch (error: any) {
+    throw new Error(error);
+  }
+});
 </script>
 
 <template>
@@ -43,18 +45,20 @@ const handleLogin = () => {
         <button class="back-btn" @click="goHome()">◀ Quay lại</button>
 
         <!-- Đăng ký -->
-        <button class="register-btn" @click="register">Đăng ký ▶</button>
+        <button class="register-btn" @click="goRegister">Đăng ký ▶</button>
 
         <h2 class="title">ĐĂNG NHẬP</h2>
-        <form @submit.prevent="handleLogin">
+        <form @submit.prevent="onSubmit()">
           <div class="content">
             <!-- Left side -->
             <div class="left">
               <label>Email</label>
-              <input type="email" v-model="authStore.email" />
+              <input type="email" v-model="email" />
+              <span class="error">{{ emailError }}</span>
 
               <label>Password</label>
-              <input type="password" v-model="authStore.password" />
+              <input type="password" v-model="password" />
+              <span class="error">{{ passwordError }}</span>
 
               <div class="remember">
                 <input type="checkbox" id="remember" tabindex="-1" />
@@ -81,8 +85,12 @@ const handleLogin = () => {
 </template>
 
 <style scoped>
-/* Toàn màn hình */
-
+.error {
+  color: red;
+  font-size: 13px;
+  margin-top: 4px;
+  display: block;
+}
 /* Background phủ full màn hình */
 .container {
   display: flex;
