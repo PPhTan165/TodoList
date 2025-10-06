@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineAsyncComponent } from "vue";
 import { useAuthStore } from "@/stores/authStore";
 import { useGoalStore } from "@/stores/goalStore";
 import GoalComponent from "@/components/Goals/GoalComponent.vue";
 import GoalSkeletonComponent from "@/components/Goals/GoalSkeletonComponent.vue";
 import HeaderComponent from "@/components/header/HeaderComponent.vue";
-import CourselComponent from "@/components/CouselComponent.vue";
 const txtSearch = ref("");
 const countMember = ref(0);
 const authStore = useAuthStore();
 const goalStore = useGoalStore();
-
 onMounted(async () => {
   await goalStore.fetchGoals();
 });
@@ -21,7 +19,6 @@ onMounted(async () => {
     <HeaderComponent />
 
     <section class="home-view">
-      <h1>TRANG CHỦ</h1>
       <div class="main" v-if="authStore.isAuthenticated">
         <div class="search-input">
           <input
@@ -44,9 +41,7 @@ onMounted(async () => {
       </div>
 
       <div v-else>
-        <h2 style="text-align: center; color: #555">
-          <CourselComponent />
-        </h2>
+        Trang chủ
       </div>
     </section>
   </main>
