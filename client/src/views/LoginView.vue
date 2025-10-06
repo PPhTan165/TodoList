@@ -1,16 +1,40 @@
-<script setup>
-
-import { RouterLink, useRouter } from "vue-router";
+<script setup lang="ts">
+import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/authStore";
+import { loginSchema } from "@/validation/authSchema";
+import { useForm, useField } from "vee-validate";
+
 const router = useRouter();
+const authStore = useAuthStore();
+const schema = loginSchema;
 
 const goHome = () => {
   router.push("/");
 };
 
-const register = () => {
+const goRegister = () => {
   router.push("/register");
 };
+
+const { handleSubmit } = useForm({
+  validationSchema: schema,
+});
+
+const { value: email, errorMessage: emailError } = useField("email");
+const { value: password, errorMessage: passwordError } = useField("password");
+
+const onSubmit = handleSubmit(async (value) => {
+  console.log("Login form values:", value);
+  try {
+    await authStore.loginUser({
+      email: value.email,
+      password: value.password,
+    });
+    router.push("/");
+  } catch (error: any) {
+    throw new Error(error);
+  }
+});
 </script>
 
 <template>
@@ -21,45 +45,52 @@ const register = () => {
         <button class="back-btn" @click="goHome()">◀ Quay lại</button>
 
         <!-- Đăng ký -->
-        <button class="register-btn" @click="register">Đăng ký ▶</button>
+        <button class="register-btn" @click="goRegister">Đăng ký ▶</button>
 
         <h2 class="title">ĐĂNG NHẬP</h2>
+        <form @submit.prevent="onSubmit()">
+          <div class="content">
+            <!-- Left side -->
+            <div class="left">
+              <label>Email</label>
+              <input type="email" v-model="email" />
+              <span class="error">{{ emailError }}</span>
 
-        <div class="content">
-          <!-- Left side -->
-          <div class="left">
-            <label>Email</label>
-            <input type="email" />
+              <label>Password</label>
+              <input type="password" v-model="password" />
+              <span class="error">{{ passwordError }}</span>
 
-            <label>Password</label>
-            <input type="password" />
+              <div class="remember">
+                <input type="checkbox" id="remember" tabindex="-1" />
+                <label for="remember">Ghi nhớ đăng nhập</label>
+              </div>
 
-            <div class="remember">
-              <input type="checkbox" id="remember" tabindex="-1" />
-              <label for="remember">Ghi nhớ đăng nhập</label>
+              <button class="login-btn" type="submit">Đăng nhập</button>
             </div>
 
-            <button class="login-btn">Đăng nhập</button>
-          </div>
+            <!-- Divider -->
+            <div class="divider"></div>
 
-          <!-- Divider -->
-          <div class="divider"></div>
-
-          <!-- Right side -->
-          <div class="right">
-            <button class="social-btn google">Login with Google</button>
-            <button class="social-btn facebook">Login with Facebook</button>
-            <button class="social-btn github">Login with Github</button>
+            <!-- Right side -->
+            <div class="right">
+              <button class="social-btn google">Login with Google</button>
+              <button class="social-btn facebook">Login with Facebook</button>
+              <button class="social-btn github">Login with Github</button>
+            </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </section>
 </template>
 
 <style scoped>
-/* Toàn màn hình */
-
+.error {
+  color: red;
+  font-size: 13px;
+  margin-top: 4px;
+  display: block;
+}
 /* Background phủ full màn hình */
 .container {
   display: flex;

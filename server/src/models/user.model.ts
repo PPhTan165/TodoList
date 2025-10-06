@@ -30,6 +30,12 @@ export const findUserByEmail = async (email: string): Promise<User[]> => {
   return rows || null;
 };
 
+export const existsUserByEmail = async (email: string): Promise<number> => {
+  const sql = "SELECT COUNT(*) as count FROM users WHERE email = ?";
+  const [rows]: any = await  db.query<{ count: number }[] & RowDataPacket[]>(sql, [email]);
+  return rows[0].count;
+}
+
 export const findUserByName = async (name: string): Promise<User[]> => {
   const sql = "SELECT * FROM users WHERE username = ?";
   const [rows]: any =await  db.query<User[] & RowDataPacket[]>(sql, [name]);

@@ -1,5 +1,5 @@
 <script setup>
-import { useTodoStore } from '@/stores/todoStore';
+import { useTodoStore } from '@/stores/taskStore';
 import { useRouter, useRoute } from 'vue-router';
 
 defineProps({

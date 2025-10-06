@@ -9,5 +9,5 @@ export const register = (user: {
   password: string;
 }) => axios.post(`${BASE_URL}/register`, user);
 
-export const login = (user: { username: string; password: string }) =>
+export const login = (user: { email: string; password: string }) =>
   axios.post(`${BASE_URL}/login`, user);

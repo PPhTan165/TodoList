@@ -30,6 +30,7 @@ onMounted(() => {
 </script>
 
 <template>
+ 
     <nav>
       <div class="left-nav">
         <RouterLink to="/"
@@ -47,10 +48,7 @@ onMounted(() => {
         </div>
         <div v-else>
           <span class="username" @click="toggleDropDown">{{ username }}</span>
-          <div
-            class="dropdown-menu"
-            v-if="isToggleDropDown"
-          >
+          <div class="dropdown-menu" v-if="isToggleDropDown">
             <ul>
               <li @click="profile">Hồ sơ cá nhân</li>
               <li @click="scheduel">Lịch công việc</li>
@@ -61,19 +59,20 @@ onMounted(() => {
         </div>
       </div>
     </nav>
+
   <RouterView />
 </template>
 
 <style scoped>
+
 nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2rem;
+  padding: 2rem 2rem;
   max-width: 1280px; /* hoặc 1280px tùy thiết kế */
-  margin: 0 auto;    /* căn giữa trong header */
+  margin: 0 auto; /* căn giữa trong header */
 }
-
 
 nav .right-nav .nav-item {
   text-decoration: none;
@@ -82,7 +81,9 @@ nav .right-nav .nav-item {
   font-size: 1.4rem;
   transition: 0.3s ease all;
 }
-
+.right-nav {
+  position: relative;
+}
 nav .right-nav .nav-item:hover {
   color: rgb(0, 0, 0);
 }
@@ -95,12 +96,13 @@ nav .right-nav .nav-item:hover {
 
 .username {
   font-weight: bold;
+  cursor: pointer;
 }
 
 .dropdown-menu {
   position: absolute;
   top: 30px;
-  right: -20px;
+  left: 0;
   background: white;
   border: 1px solid #ccc;
   border-radius: 8px;

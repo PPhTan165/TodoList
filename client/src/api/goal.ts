@@ -1,6 +1,6 @@
 import api from "@/api/axios";
 
-const BASE_URL = "http://localhost:3000/api/goals";
+const BASE_URL = "http://localhost:3000/api/";
 
 export const getAllGoals = () => api.get(BASE_URL);
 export const getGoalById = (goalId:number) => api.get(`${BASE_URL}/${goalId}`);

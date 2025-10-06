@@ -1,5 +1,4 @@
 <script setup>
-import HeaderComponent from "@/components/header/HeaderComponent.vue";
 </script>
 
 <template>
@@ -8,4 +7,6 @@ import HeaderComponent from "@/components/header/HeaderComponent.vue";
 </main>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>

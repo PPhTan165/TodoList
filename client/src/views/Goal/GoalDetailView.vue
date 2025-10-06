@@ -1,12 +1,19 @@
 <script setup lang="ts">
 import HeaderComponent from "@/components/header/HeaderComponent.vue";
 import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import TaskSection from "@/components/Task/TaskSection.vue";
 import MemberList from "@/components/Member/MemberList.vue";
-
+import { useGoalStore } from "@/stores/goalStore";
+import { useTodoStore } from "@/stores/taskStore";
 const title = ref<string>("Chi tiết mục tiêu");
+const route = useRoute();
+const goalId = Number(route.params)
+const taskStore = useTodoStore();
 
+const taskData = ref(taskStore.fetchTasks(goalId));
+console.log(taskData);
 const tasksTodo = [
   {
     title: "Viết báo cáo",
